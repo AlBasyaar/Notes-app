@@ -3,7 +3,13 @@
 import { useState } from "react"
 import { Edit, Trash2, MoreVertical } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import Swal from "sweetalert2"
 
 export default function NoteCard({ note, onEdit, onDelete }) {
   const [isHovered, setIsHovered] = useState(false)
@@ -13,6 +19,23 @@ export default function NoteCard({ note, onEdit, onDelete }) {
       year: "numeric",
       month: "short",
       day: "numeric",
+    })
+  }
+
+  const handleDelete = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        onDelete()
+        Swal.fire("Deleted!", "Your note has been deleted.", "success")
+      }
     })
   }
 
@@ -38,7 +61,7 @@ export default function NoteCard({ note, onEdit, onDelete }) {
               <Edit className="mr-2 h-4 w-4" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onDelete} className="text-red-500 focus:text-red-500">
+            <DropdownMenuItem onClick={handleDelete} className="text-red-500 focus:text-red-500">
               <Trash2 className="mr-2 h-4 w-4" />
               Delete
             </DropdownMenuItem>
@@ -48,7 +71,9 @@ export default function NoteCard({ note, onEdit, onDelete }) {
       <div className="mt-2 text-sm text-slate-600 dark:text-slate-300 line-clamp-4 whitespace-pre-line">
         {note.content || "No content"}
       </div>
-      <div className="mt-4 text-xs text-slate-500 dark:text-slate-400">{formatDate(note.updatedAt)}</div>
+      <div className="mt-4 text-xs text-slate-500 dark:text-slate-400">
+        {formatDate(note.updatedAt)}
+      </div>
     </div>
   )
 }
