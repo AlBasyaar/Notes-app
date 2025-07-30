@@ -25,22 +25,20 @@ export default function NotesApp() {
     const savedNotes = localStorage.getItem("notes")
     if (savedNotes) {
       try {
-        const parsedNotes = JSON.parse(savedNotes)
-        // Convert string dates back to Date objects
-        const notesWithDates = parsedNotes.map((note) => ({
+        const parsed = JSON.parse(savedNotes)
+        const restored = parsed.map((note) => ({
           ...note,
           createdAt: new Date(note.createdAt),
           updatedAt: new Date(note.updatedAt),
         }))
-        setNotes(notesWithDates)
-      } catch (error) {
-        console.error("Error parsing notes from localStorage", error)
+        setNotes(restored)
+      } catch (err) {
+        console.error("Error parsing notes", err)
       }
     }
   }, [])
 
   useEffect(() => {
-    // Save notes to localStorage whenever they change
     localStorage.setItem("notes", JSON.stringify(notes))
   }, [notes])
 
@@ -58,11 +56,22 @@ export default function NotesApp() {
   }
 
   const saveNote = (note) => {
-    if (notes.find((n) => n.id === note.id)) {
-      // Update existing note
-      setNotes(notes.map((n) => (n.id === note.id ? { ...note, updatedAt: new Date() } : n)))
+    const existing = notes.find((n) => n.id === note.id)
+    if (existing) {
+      // update note, gunakan warna yang baru dipilih
+      setNotes(
+        notes.map((n) =>
+          n.id === note.id
+            ? {
+                ...note,
+                color: note.color || n.color,
+                updatedAt: new Date(),
+              }
+            : n
+        )
+      )
     } else {
-      // Add new note
+      // note baru
       setNotes([...notes, note])
     }
     setIsEditing(false)
@@ -86,7 +95,7 @@ export default function NotesApp() {
   const filteredNotes = notes.filter(
     (note) =>
       note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      note.content.toLowerCase().includes(searchQuery.toLowerCase()),
+      note.content.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
@@ -117,7 +126,10 @@ export default function NotesApp() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredNotes.length > 0 ? (
             filteredNotes
-              .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+              .sort(
+                (a, b) =>
+                  new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+              )
               .map((note) => (
                 <NoteCard
                   key={note.id}
@@ -132,13 +144,11 @@ export default function NotesApp() {
                 <svg
                   className="h-6 w-6 text-slate-500 dark:text-slate-400"
                   fill="none"
-                  height="24"
                   stroke="currentColor"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
                   viewBox="0 0 24 24"
-                  width="24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
@@ -148,9 +158,13 @@ export default function NotesApp() {
                   <line x1="10" x2="8" y1="9" y2="9" />
                 </svg>
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-slate-800 dark:text-slate-100">No notes found</h3>
+              <h3 className="mt-4 text-lg font-semibold text-slate-800 dark:text-slate-100">
+                No notes found
+              </h3>
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                {searchQuery ? "Try a different search term" : "Create your first note to get started"}
+                {searchQuery
+                  ? "Try a different search term"
+                  : "Create your first note to get started"}
               </p>
             </div>
           )}
