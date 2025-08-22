@@ -44,7 +44,7 @@ function NoteEditor({ note, onSave, onCancel }) {
     const content = tasks.map((t) => t.text).join("\n")
     if (!title.trim() || !content.trim()) {
       Swal.fire({
-        icon: "Peringatan",
+        icon: "warning",
         title: "Tidak Lengkap",
         text: "Harap isi judul dan setidaknya satu task.",
       })
@@ -63,7 +63,7 @@ function NoteEditor({ note, onSave, onCancel }) {
     onSave(updatedNote)
 
     Swal.fire({
-      icon: "berhasil",
+      icon: "success",
       title: "Tersimpan!",
       text: "Anda telah berhasil diperbarui.",
       showConfirmButton: false,
