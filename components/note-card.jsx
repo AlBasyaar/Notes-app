@@ -34,7 +34,7 @@ export default function NoteCard({ note, onEdit, onDelete }) {
     }).then((result) => {
       if (result.isConfirmed) {
         onDelete()
-        Swal.fire("Dihapus!", "Catatan Anda telah dihapus.", "Sukses")
+        Swal.fire("Dihapus!", "Catatan Anda telah dihapus.", "success")
       }
     })
   }
